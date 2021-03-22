@@ -1,0 +1,20 @@
+.super-title {
+    * {
+        box-shadow: 0 0 5px 5px green;
+        background-color: green;
+        color: white;
+    }
+}
+
+ion-icon {
+    &.icon-fab {
+        z-index: 1;
+        box-shadow: 0 0 5px 5px white;
+        background-color: white;
+        font-size: 1.8rem;
+        color: var(--ion-color-warning);
+    }
+    &.icon-header {
+        font-size: 1.5rem;
+    }
+}

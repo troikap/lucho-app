@@ -1,0 +1,7 @@
+ion-button {
+    text-transform: initial;
+    &.button-center {
+        margin: 0 25% 0 25%;
+        width: 50%;
+    }
+}

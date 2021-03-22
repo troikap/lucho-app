@@ -1,0 +1,129 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Bluetooth
+    </ion-title>
+    <ion-buttons slot="secondary">
+      <ion-icon name="bluetooth" class="icon-header"></ion-icon>
+      <ion-toggle color="success" [(ngModel)]="activated" disabled></ion-toggle>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class='ion-padding'>
+  <div *ngIf="!activated">
+    <ion-button (click)="onActivateBluetooth()" class="button-center">
+      Activar Bluetooth
+    </ion-button>
+  </div>
+  <div class="ion-text-center" *ngIf="!activated">
+    <h3>Por favor active bluetooth de su equipo</h3>
+  </div>
+  <div class="ion-text-center" *ngIf="activated && !listDevice && !connected">
+    <h3>Escanee en busca de dispositivos</h3>
+  </div>
+  <div class="ion-text-center super-title" *ngIf="connected">
+    <ion-row>
+      <ion-col>
+        <h1 class="ion-no-margin">Conectado</h1>
+      </ion-col>
+      <ion-col size=2 class="ion-text-end">
+        <ion-icon name="cut-outline" class="icon-fab" (click)="onDisconnectToDevice()"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="connected">
+    <ion-fab-button *ngIf="subscribed" color="warning">
+      <ion-icon name="hand-left-outline" (click)="onUnsubscribe()"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="!subscribed" (click)="onSubscribe()">
+      <ion-icon name="caret-forward-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+
+  <ion-grid *ngIf="listDevice">
+    <ion-title>Dispositivos</ion-title>
+    <ion-list class="list-devices">
+      <ion-row>
+        <ion-col>
+          <ion-label>
+            Nombre
+          </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>
+            IP
+          </ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let device of listDevice" (click)="onConnectToDevice(device)">
+        <ion-col>
+          <ion-label>
+            {{device.name}}
+          </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>
+            {{device.address}}
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+    <div class="ion-text-center">
+      <h3>Seleccione algun dispositivo</h3>
+    </div>
+  </ion-grid>
+
+  <ion-grid *ngIf="listUnpairedDevices && listUnpairedDevices.length !== 0">
+    <ion-title>Dispositivos no vinculados</ion-title>
+    <ion-list class="list-devices">
+      <ion-row>
+        <ion-col>
+          <ion-label>
+            Nombre
+          </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>
+            IP
+          </ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let device of listUnpairedDevices" (click)="onConnectToDevice(device)">
+        <ion-col>
+          <ion-label>
+            {{device.name}}
+          </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>
+            {{device.address}}
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </ion-grid>
+  <br>
+
+  <div class="ion-text-center" *ngIf="connected && !subscribed && (!data || data.length == 0)">
+    <h3>Precione play para comenzar a recibir datos </h3>
+  </div>
+
+  <div *ngIf="connected && (subscribed || (data && data.length !== 0))">
+    <ion-title>
+      DATOS RECIBIDOS
+    </ion-title>
+    <h4>Dato leido <strong>{{datum}}</strong></h4>
+    <ion-list class="list-data">
+      <ion-row *ngFor="let datumData of data">{{datumData}}</ion-row>
+    </ion-list>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-button expand="block" (click)="onScanBluetooth()" *ngIf="!connected">
+    Escanear con bluetooth
+  </ion-button>
+</ion-footer>
