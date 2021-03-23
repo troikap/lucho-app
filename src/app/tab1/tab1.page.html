@@ -42,7 +42,6 @@
     </ion-fab-button>
   </ion-fab>
 
-
   <ion-grid *ngIf="listDevice">
     <ion-title>Dispositivos</ion-title>
     <ion-list class="list-devices">
@@ -116,6 +115,14 @@
       DATOS RECIBIDOS
     </ion-title>
     <h4>Dato leido <strong>{{datum}}</strong></h4>
+    <h1>B1 = <strong>{{value_b1}}</strong></h1>
+    <h1>B2 = <strong>{{value_b2}}</strong></h1>
+    <h1>B3 = <strong>{{value_b3}}</strong></h1>
+    <h1>B4 = <strong>{{value_b4}}</strong></h1>
+    <h1>P1 = <strong>{{value_p1}}</strong></h1>
+    <h1>P1 = <strong>{{value_p2}}</strong></h1>
+
+
     <ion-list class="list-data">
       <ion-row *ngFor="let datumData of data">{{datumData}}</ion-row>
     </ion-list>

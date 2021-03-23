@@ -24,7 +24,14 @@ export class Tab1Page {
   public datum;
   public readed;
   public data: string[];
-  public subscribed; 
+  public subscribed;
+  public value_b1;
+  public value_b2;
+  public value_b3;
+  public value_b4;
+  public value_p1;
+  public value_p2;
+
 
   constructor(
     private toastProvider: ToastProvider,
@@ -32,11 +39,11 @@ export class Tab1Page {
     private loadingController: LoadingController,
     private bluetoothProvider: BluetoothProvider,
     private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
   }
-  
+
   ionViewDidEnter() {
     console.log('ionViewDidEnter')
     this.verifyBluetoothEnabled();
@@ -83,7 +90,7 @@ export class Tab1Page {
     }
     this.onScanBluetooth();
   }
-  
+
   public async onDisconnectToDevice() {
     this.loading = await this.loadingController.create({
       message: 'Desconectado dispositivo ...'
@@ -99,14 +106,14 @@ export class Tab1Page {
         this.onScanBluetooth();
         this.changeDetectorRef.detectChanges();
       }
-    } catch ( err ) {
+    } catch (err) {
       console.log('NO SE PUDO DESCONECTAR ', err)
       await this.loading.dismiss();
     }
-    
+
   }
 
-  public async onConnectToDevice( device: BluetoothDevice ) {
+  public async onConnectToDevice(device: BluetoothDevice) {
     this.connected = false;
     this.data = [];
     const alert = await this.alertController.create({
@@ -125,7 +132,7 @@ export class Tab1Page {
             });
             await this.loading.present();
             this.bluetooth = await this.bluetoothProvider.getBluetoothSerial();
-            this.bluetooth.connect(device.address).subscribe( async connected => {
+            this.bluetooth.connect(device.address).subscribe(async connected => {
               await this.loading.dismiss();
               this.connected = true;
               this.listDevice = null;
@@ -141,13 +148,38 @@ export class Tab1Page {
   public async onSubscribe() {
     this.subscribed = await this.bluetoothProvider.subscribeToDevice();
     this.toastProvider.presentToast(`Recibiendo datos..`, 700, 'success');
-    this.subscribed = this.subscribed.subscribe( value => {
+    this.subscribed = await this.subscribed.subscribe( async value => {
+      console.log('VALOR LEIDO ', value)
       this.datum = value;
-      if (value == 'TI') {
-
+      if (value == 'INICIANDO TESTEO DARD' || value == 'TI' || value == 'TF') {
+        alert(value)
       }
-      this.data.push(value);
-      this.changeDetectorRef.detectChanges();
+      if (value.includes("B1=")) {
+        console.log('LEYENDO B1 ', value.includes("B1="))
+        this.value_b1 = value.split('=')[1];
+      }
+      if (value.includes("B2=")) {
+        console.log('LEYENDO B2 ', value.includes("B2="))
+        this.value_b2 = value.split('=')[1];
+      }
+      if (value.includes("B3=")) {
+        console.log('LEYENDO B3 ', value.includes("B3="))
+        this.value_b3 = value.split('=')[1];
+      }
+      if (value.includes("B4=")) {
+        console.log('LEYENDO B4 ', value.includes("B4="))
+        this.value_b4 = value.split('=')[1];
+      }
+      if (value.includes("P1=")) {
+        console.log('LEYENDO P1 ', value.includes("P1="))
+        this.value_p1 = value.split('=')[1];
+      }
+      if (value.includes("P2=")) {
+        console.log('LEYENDO P2 ', value.includes("P2="))
+        this.value_p2 = value.split('=')[1];
+      }
+      await this.data.push(value);
+      await this.changeDetectorRef.detectChanges();
     })
   }
 
@@ -167,7 +199,7 @@ export class Tab1Page {
 
   async onGetNumberBytesAvailable() {
     this.numberAvailable = await this.bluetoothProvider.getNumberBytesAvailable();
-    console.log(' NUMERO ',this.numberAvailable)
+    console.log(' NUMERO ', this.numberAvailable)
   }
 
   async readRSSI() {
