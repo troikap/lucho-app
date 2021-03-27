@@ -1,4 +1,7 @@
 ion-list {
+    p, h1, h2, h3, h4, h5, h6, ion-label, span, ion-title, strong {
+        color: var(--ion-color-primary) !important;
+    }
     &.list-devices {
         border: 2px solid grey;
         border-radius: 10px;
@@ -7,21 +10,24 @@ ion-list {
                 border-bottom: 2px solid grey;
             }
             &:not(:first-child) {
-                margin-top: 0.5rem;
-                box-shadow: 0 0 14px -3px inset blue;
+                margin-top: 1rem;
+                box-shadow: 0 0 14px -3px inset var(--ion-color-primary);
+                border: 2px solid var(--ion-color-primary);
             }
         }
     }
     &.list-data {
         border: 2px solid black;
         border-radius: 5px;
-        background-color: grey;
-        color: white;
         column-count: 2;
         ion-row {
-            font-size: 0.8rem;
             margin-top: 0.1rem;
-            box-shadow: 0 0 14px -3px inset white;
+            box-shadow: 0 0 5px 0px var(--ion-color-primary) inset;
+            padding: 3px;
+            p {
+                margin: 0;
+                font-size: 0.8rem;
+            }
         }
     }
 }

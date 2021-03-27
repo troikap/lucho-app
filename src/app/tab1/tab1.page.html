@@ -1,5 +1,5 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color=primary>
     <ion-title>
       Bluetooth
     </ion-title>
@@ -10,7 +10,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class='ion-padding'>
+<ion-content [fullscreen]="true" class='ion-padding' color=secondary>
   <div *ngIf="!activated">
     <ion-button (click)="onActivateBluetooth()" class="button-center">
       Activar Bluetooth
@@ -33,16 +33,8 @@
     </ion-row>
   </div>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="connected">
-    <ion-fab-button *ngIf="subscribed" color="warning">
-      <ion-icon name="hand-left-outline" (click)="onUnsubscribe()"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button *ngIf="!subscribed" (click)="onSubscribe()">
-      <ion-icon name="caret-forward-circle-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
   <ion-grid *ngIf="listDevice">
+    <br>
     <ion-title>Dispositivos</ion-title>
     <ion-list class="list-devices">
       <ion-row>
@@ -105,28 +97,6 @@
     </ion-list>
   </ion-grid>
   <br>
-
-  <div class="ion-text-center" *ngIf="connected && !subscribed && (!data || data.length == 0)">
-    <h3>Precione play para comenzar a recibir datos </h3>
-  </div>
-
-  <div *ngIf="connected && (subscribed || (data && data.length !== 0))">
-    <ion-title>
-      DATOS RECIBIDOS
-    </ion-title>
-    <h4>Dato leido <strong>{{datum}}</strong></h4>
-    <h1>B1 = <strong>{{value_b1}}</strong></h1>
-    <h1>B2 = <strong>{{value_b2}}</strong></h1>
-    <h1>B3 = <strong>{{value_b3}}</strong></h1>
-    <h1>B4 = <strong>{{value_b4}}</strong></h1>
-    <h1>P1 = <strong>{{value_p1}}</strong></h1>
-    <h1>P1 = <strong>{{value_p2}}</strong></h1>
-
-
-    <ion-list class="list-data">
-      <ion-row *ngFor="let datumData of data">{{datumData}}</ion-row>
-    </ion-list>
-  </div>
 </ion-content>
 
 <ion-footer>

@@ -1,17 +1,61 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color=primary>
     <ion-title>
-      Tab 2
+      Lecturas
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class='ion-padding' color=secondary>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <div *ngIf="!connected || !activated">
+    <h3>Vuelve a Bluetooth y verifica conexion</h3>
+  </div>
+  
+  <div class="ion-text-center" *ngIf="connected && !subscribed && (!data || data.length == 0)">
+    <h3>Presione play para comenzar a recibir datos </h3>
+  </div>
+
+  <div *ngIf="connected && (subscribed || (data && data.length !== 0))">
+    <br>
+    <ion-title *ngIf="baseStatus && baseStatus.length > 0">
+      Estado de Bases
+    </ion-title>
+    <div *ngIf="baseStatus && baseStatus.length > 0" class="class-carrousel">
+      <ion-row>
+        <div class="class-status" *ngFor="let base of baseStatus" [ngClass]="{'error': base.status.includes(errorMessage)}">
+          <p>{{base.id}}</p>
+        </div>
+      </ion-row>
+    </div>
+    <div *ngIf="data && data.length > 0">
+      <br>
+      <ion-title class="ion-text-center">
+        DATOS RECIBIDOS
+      </ion-title>
+      <h4 class="ion-text-center"> <strong>{{datum}}</strong></h4>
+      <ion-list class="list-data">
+        <ion-row *ngFor="let datumData of data">
+          <p>
+            {{datumData}}
+          </p>
+        </ion-row>
+      </ion-list>
+    </div>
+    <div class="ion-text-center" *ngIf="data && data.length == 0">
+      <h3>
+        No has recibido nada todavia
+      </h3>
+    </div>
+  </div>
+   
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="connected">
+    <ion-fab-button *ngIf="subscribed" color="warning">
+      <ion-icon name="hand-left-outline" (click)="onUnsubscribe()"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="!subscribed" (click)="onSubscribe()">
+      <ion-icon name="caret-forward-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

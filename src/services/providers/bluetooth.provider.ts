@@ -33,19 +33,17 @@ export class BluetoothProvider {
   async verifyConnectedDevice () {
     try {
       const connected = await this.bluetoothSerial.isConnected();
-      console.log('DISPOSITIVO CONECTADO ', connected)
-      return connected;
+      if (connected) { return true; }
     } catch {
       console.log('NO SE ENCUENTRA CONECTADO ')
-      return; 
+      return false; 
     }
   }
   
   async disconnectToDevice () {
     try {
       const active = await this.bluetoothSerial.disconnect();
-      if (active) { return true }
-      else { return false; }
+      if (active) { return true; }
     } catch {
       console.log('catch BLUETOOTH DESCONECTADO ')
       return false;

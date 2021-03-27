@@ -18,3 +18,40 @@ ion-icon {
         font-size: 1.5rem;
     }
 }
+
+ion-content {
+    p, h1, h2, h3, h4, h5, h6, ion-label, span, ion-title, strong {
+        color: var(--ion-color-tertiary);
+    }
+}
+
+.class-carrousel {
+    box-shadow: 0 0 16px 1px inset;
+    padding: 1rem;
+    border-radius: 10px;
+    >ion-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow: auto;
+      align-items: center;
+    }
+    .class-status {
+      min-width: 3rem;
+      height: 2.5rem;
+      background-color: var(--ion-color-success);
+      border-radius: 5px;
+      text-align: center;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      p {
+        font-weight: 300;
+      }
+      &.error {
+        background-color: var(--ion-color-danger);
+      }
+    }
+  }
