@@ -28,7 +28,6 @@ export class Tab2Page {
 
   ngOnInit() {
     this.baseStatus = [];
-    this.data = [];
   }
   
   ionViewWillEnter() {
@@ -62,6 +61,9 @@ export class Tab2Page {
 
   public async onSubscribe() {
     this.subscribed = "";
+    if (!this.data) { 
+      this.data = [];
+    }
     this.subscribed = await this.bluetoothProvider.subscribeToDevice();
     this.toastProvider.presentToast(`Recibiendo datos..`, 700, 'success');
     this.subscribed = await this.subscribed.subscribe( async value => {

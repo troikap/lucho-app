@@ -7,6 +7,11 @@ import { Component } from '@angular/core';
 })
 export class Tab3Page {
 
-  constructor() {}
+  constructor(
+  ) {}
+
+  ionViewWillEnter() {
+    console.log('ionViewWillEnter DE Resultado')
+  }
 
 }

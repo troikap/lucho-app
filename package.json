@@ -24,6 +24,7 @@
     "@ionic-native/bluetooth-serial": "^5.31.1",
     "@ionic-native/core": "^5.31.1",
     "@ionic/angular": "^5.5.2",
+    "animate.css": "^4.1.1",
     "cordova-plugin-bluetooth-serial": "^0.4.7",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

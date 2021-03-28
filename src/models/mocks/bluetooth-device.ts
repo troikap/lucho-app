@@ -1,4 +1,6 @@
-let bluetooth_devices = [
+import { BluetoothDevice } from "../bluetooth-device";
+
+let bluetooth_devices: BluetoothDevice[] = [
     {   
         address: "1C:3A:48:48:9D:A6",
         class: 1028,
