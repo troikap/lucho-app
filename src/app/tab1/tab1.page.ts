@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { AlertController, createAnimation, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Observable } from 'rxjs';
-import { BluetoothDevice } from 'src/models/bluetooth-device';
+import { BluetoothDeviceModel } from 'src/models/bluetooth-device.model';
 import { BluetoothProvider } from 'src/services/providers/bluetooth.provider';
 import { ToastProvider } from 'src/services/providers/toast.provider';
 import { ChangeDetectorRef } from '@angular/core';
-import { bluetooth_devices } from 'src/models/mocks/bluetooth-device';
-import { Animation, AnimationController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab1',
@@ -14,8 +12,8 @@ import { Animation, AnimationController } from '@ionic/angular';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  public listDevice: BluetoothDevice[];
-  public listUnpairedDevices: BluetoothDevice[];
+  public listDevice: BluetoothDeviceModel[];
+  public listUnpairedDevices: BluetoothDeviceModel[];
   public activated;
   public connected = false;
   public conection: Observable<any>;
@@ -25,7 +23,6 @@ export class Tab1Page {
   public readed;
   private intervalConnected;
   public showDevices = false;
-  private animation: Animation;
 
   constructor(
     private toastProvider: ToastProvider,
@@ -33,7 +30,6 @@ export class Tab1Page {
     private loadingController: LoadingController,
     private bluetoothProvider: BluetoothProvider,
     private changeDetectorRef: ChangeDetectorRef,
-    private animationController: AnimationController
   ) {}
 
   ngOnInit() {
@@ -42,16 +38,6 @@ export class Tab1Page {
   ionViewDidEnter() {
     console.log('ionViewDidEnter Bluetooth')
     this.verifyBluetoothEnabled();
-
-    this.animation = this.animationController.create()
-    .addElement(document.querySelectorAll('.list'))
-    .duration(5000)
-    .iterations(5)
-    // .fromTo('opacity', '1', '0.5');
-    .fromTo('opacity', '0', '1')
-    .fromTo('width', '0', '100%');
-
-    this.animation.play();
   }
 
   async verifyBluetoothEnabled() {
@@ -64,7 +50,9 @@ export class Tab1Page {
       this.activated = await this.bluetoothProvider.verifyBluetoothIsEnabled();
       if (!this.activated) {
         this.cleanData();
+        return;
       }
+      await this.onScanBluetooth();
     }, 500);
   }
 
@@ -79,24 +67,16 @@ export class Tab1Page {
   }
 
   public async onScanBluetooth() {
-    this.animation.play();
     const isEnabled = await this.bluetoothProvider.verifyBluetoothIsEnabled();
-    // if (!isEnabled) {
-    //   this.toastProvider.presentToast(`(ERROR) Active bluetooth`, 1500, 'warning');
-    //   return;
-    // }
-    // this.listDevice = await this.bluetoothProvider.listBluetoothDevices();
-    // if (this.listDevice === null) {
-    //   this.toastProvider.presentToast(`(ERROR) No se encontraron dispositivos`, 1500, 'warning');
-    //   return;
-    // }
-
-    this.listDevice = bluetooth_devices;
-    
-    console.log('DISPOSITIVOS ', this.listDevice)
-    
-
-
+    if (!isEnabled) {
+      this.toastProvider.presentToast(`(ERROR) Active bluetooth`, 1500, 'warning');
+      return;
+    }
+    this.listDevice = await this.bluetoothProvider.listBluetoothDevices();
+    if (this.listDevice === null) {
+      this.toastProvider.presentToast(`(ERROR) No se encontraron dispositivos`, 1500, 'warning');
+      return;
+    }
     this.changeDetectorRef.detectChanges();
   }
 
@@ -127,14 +107,16 @@ export class Tab1Page {
       console.log('NO SE PUDO DESCONECTAR ', err)
       await this.loading.dismiss();
     }
-
   }
 
-  public async onConnectToDevice(device?: BluetoothDevice) {
-    let defaultDevice: BluetoothDevice;
+  public async onConnectToDevice(device?: BluetoothDeviceModel) {
+    let defaultDevice: BluetoothDeviceModel;
+    if (!this.listDevice) { this.listDevice = []; }
     console.log('devices ', device)
     if (!device) {
-      defaultDevice = this.listDevice.find( element => element.name === 'DARD')
+      defaultDevice = this.listDevice.find( element => element.name === 'D.A.R.D')
+      console.log('defaultDevice ', defaultDevice)
+
       if (!defaultDevice) {
         this.toastProvider.presentToast('No se encontro el dispositivo DARD, escanee nuevamente y vuelva a intentarlo', 1500, 'warning');
         return;
@@ -160,6 +142,7 @@ export class Tab1Page {
             this.intervalConnected = setInterval( async ()=>{
               await this.loading.dismiss();
               this.toastProvider.presentToast('No se pudo conectar al dispositivo', 1000, 'warning');
+              clearInterval(this.intervalConnected);
             },5000);
             this.bluetooth = await this.bluetoothProvider.getBluetoothSerial();
             this.bluetooth.connect(device.address).subscribe(async connected => {

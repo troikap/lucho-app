@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
+import { DardModel } from 'src/models/dard.model';
+import { IdentifyDataDardHelper } from 'src/services/helpers/identify-data-dard.helper';
 import { BluetoothProvider } from 'src/services/providers/bluetooth.provider';
 import { ToastProvider } from 'src/services/providers/toast.provider';
 
@@ -13,17 +15,19 @@ export class Tab2Page {
   public activated;
   public connected;
   public bluetooth;
-  public data: string[];
+  public data: any[];
   public subscribed;
-  public baseStatus: {id: string, status: string}[];
+  public baseStatus: DardModel[];
   public errorMessage = 'FALLA/DESCONECTADA';
-  public datum;
+  public datum: DardModel;
+  public intervalConnected;
 
   constructor(
     private loadingController: LoadingController,
     private bluetoothProvider: BluetoothProvider,
     private toastProvider: ToastProvider,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private identifyDataDardHelper: IdentifyDataDardHelper
   ) { }
 
   ngOnInit() {
@@ -42,7 +46,8 @@ export class Tab2Page {
   }
 
   async verifyConnectedDevice() {
-    this.connected = await this.bluetoothProvider.verifyConnectedDevice()
+    this.connected = await this.bluetoothProvider.verifyConnectedDevice();
+
   }
   
   async verifyBluetoothEnabled() {
@@ -61,32 +66,75 @@ export class Tab2Page {
 
   public async onSubscribe() {
     this.subscribed = "";
-    if (!this.data) { 
-      this.data = [];
-    }
+    if (!this.data) { this.data = []; }
+    if (!this.baseStatus) { this.baseStatus = []; }
+
     this.subscribed = await this.bluetoothProvider.subscribeToDevice();
     this.toastProvider.presentToast(`Recibiendo datos..`, 700, 'success');
-    this.subscribed = await this.subscribed.subscribe( async value => {
-      this.datum = value;
-      let status: string;
-      let values: string[];
-      if (value == 'INICIANDO TESTEO DARD' || value == 'TI' || value == 'TF') {
-        alert(value)
+    this.subscribed = await this.subscribed.subscribe( async (value: string) => {
+      console.log('VALUE ', value)
+
+      this.datum = JSON.parse(JSON.stringify(value));
+      console.log('datum ', this.datum)
+      console.log('datum id : ', this.datum.id)
+      console.log('datum  status ', this.datum.status)
+
+
+      const typeData =  await this.identifyDataDardHelper.getTypeData(this.datum.id);
+      switch (typeData) {
+        case 'base':
+          console.log('ENTRO EN BASE')
+          const baseFinded = this.baseStatus.find(element => element.id === this.datum.id);
+          if (baseFinded) {
+            console.log('base encontrada ', baseFinded)
+            baseFinded.status = this.datum.status;
+            baseFinded.data = this.datum.data;
+          } else {
+            console.log('base no encontrada ')
+            this.baseStatus.push(this.datum);
+          }
+          break;
+        case 'test':
+          console.log('ENTRO EN TEST')
+        
+          break;
+      
+        default:
+          console.log('ENTRO EN NINGUNO')
+
+          break;
       }
-      if (value.includes("=")) {
-        values = value.split('=');
-        let baseFinded = this.baseStatus.find(element => element.id === values[0])
-        status = values[1].split("\n")[0];
-        if (baseFinded) {
-          baseFinded.status = status;
-        } else {
-          this.baseStatus.push({id: values[0], status: status})
-        }
-      }
-      this.data.push(value);
+      this.data.push(this.datum);
       this.changeDetectorRef.detectChanges();
     })
+    this.bluetoothProvider.writeToDevice('S');
     this.changeDetectorRef.detectChanges();
+  }
+
+  public async onClickInitTest() {
+    this.loading = await this.loadingController.create({
+      message: 'Iniciando testeo ...'
+    });
+    await this.loading.present();
+    this.intervalConnected = setInterval( async ()=>{
+      await this.loading.dismiss();
+      this.toastProvider.presentToast('No se obtuvo resultado', 1000, 'warning');
+      clearInterval(this.intervalConnected);
+    },5000);
+    try {
+      this.loading.dismiss();
+      const response = await this.bluetoothProvider.writeToDevice('T');
+      if (response) {
+        console.log('RESPUESTA onClickInitTest ', response);
+        clearInterval(this.intervalConnected);
+        this.toastProvider.presentToast('Iniciando testeo ..', 1000, 'success');
+      }
+    } catch (err) {
+      console.log('CATCH ', err);
+      this.loading.dismiss();
+      this.toastProvider.presentToast('Problemas al iniciar testeo', 1000, 'danger');
+      clearInterval(this.intervalConnected);
+    }
   }
 
   public async onUnsubscribe() {

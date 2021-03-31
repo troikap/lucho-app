@@ -1,7 +1,7 @@
 
 import { Injectable } from "@angular/core";
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial/ngx";
-import { BluetoothDevice } from 'src/models/bluetooth-device';
+import { BluetoothDeviceModel } from 'src/models/bluetooth-device.model';
 
 @Injectable({ providedIn: "root" })
 export class BluetoothProvider {
@@ -50,7 +50,7 @@ export class BluetoothProvider {
     }
   }
 
-  async connectToDevice (device: BluetoothDevice) {
+  async connectToDevice (device: BluetoothDeviceModel) {
     console.log('CONECTANDOSE CON ADDRES ', device.address);
     try {
       return this.bluetoothSerial.connect(device.address);
@@ -59,7 +59,7 @@ export class BluetoothProvider {
     }
   }
 
-  async connectInsecureToDevice (device: BluetoothDevice) {
+  async connectInsecureToDevice (device: BluetoothDeviceModel) {
     this.bluetoothSerial.connectInsecure(device.address).subscribe( connection => {
       console.log('CONEXION INSEGURA', connection);
       if (connection) { return true; }
@@ -80,7 +80,7 @@ export class BluetoothProvider {
 
   async listBluetoothDevices() {
     try {
-      const list: BluetoothDevice[] = await this.bluetoothSerial.list();
+      const list: BluetoothDeviceModel[] = await this.bluetoothSerial.list();
       if (list) { return list; }
       else { return; }
     } catch {

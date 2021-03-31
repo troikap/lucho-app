@@ -8,7 +8,7 @@
 
 <ion-content [fullscreen]="true" class='ion-padding' color=secondary>
 
-  <div *ngIf="!connected || !activated">
+  <div *ngIf="!connected || !activated" class="ion-text-center">
     <h3>Vuelve a Bluetooth y verifica conexion</h3>
   </div>
   
@@ -23,7 +23,7 @@
     </ion-title>
     <div *ngIf="baseStatus && baseStatus.length > 0" class="class-carrousel">
       <ion-row>
-        <div class="class-status" *ngFor="let base of baseStatus" [ngClass]="{'error': base.status.includes(errorMessage)}">
+        <div class="class-status" *ngFor="let base of baseStatus" [ngClass]="{'error': base.status === 0}">
           <p>{{base.id}}</p>
         </div>
       </ion-row>
@@ -35,10 +35,27 @@
       </ion-title>
       <h4 class="ion-text-center"> <strong>{{datum}}</strong></h4>
       <ion-list class="list-data">
+        <ion-row>
+          <ion-col>
+            <p>Id</p>
+          </ion-col>
+          <ion-col>
+            <p>Status</p>
+          </ion-col>
+          <ion-col>
+            <p>Data</p>
+          </ion-col>
+        </ion-row>
         <ion-row *ngFor="let datumData of data">
-          <p>
-            {{datumData}}
-          </p>
+          <ion-col>
+            <p>{{datumData.id}}</p>
+          </ion-col>
+          <ion-col>
+            <p>{{datumData.status}}</p>
+          </ion-col>
+          <ion-col>
+            <p>{{datumData.data}}</p>
+          </ion-col>
         </ion-row>
       </ion-list>
     </div>
@@ -59,3 +76,7 @@
   </ion-fab>
 
 </ion-content>
+
+<ion-footer>
+  <ion-button expand=full fill=solid size=large (click)="onClickInitTest()" [disabled]="!connected || !subscribed"> Iniciar Testeo </ion-button>
+</ion-footer>

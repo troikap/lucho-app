@@ -1,4 +1,4 @@
-export interface BluetoothDevice {
+export interface BluetoothDeviceModel {
     address: string;
     class: number;
     id: string;
