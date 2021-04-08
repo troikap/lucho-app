@@ -19,7 +19,7 @@ ion-list {
     &.list-data {
         border: 2px solid black;
         border-radius: 5px;
-        column-count: 2;
+        column-count: 1;
         ion-row {
             margin-top: 0.1rem;
             box-shadow: 0 0 5px 0px var(--ion-color-primary) inset;
@@ -27,6 +27,16 @@ ion-list {
             p {
                 margin: 0;
                 font-size: 0.8rem;
+            }
+            &:not(:first-child) {
+                height: 1.5rem;
+                padding-top: 0.3rem;
+                ion-col {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
             }
         }
     }

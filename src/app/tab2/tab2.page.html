@@ -33,13 +33,13 @@
       <ion-title class="ion-text-center">
         DATOS RECIBIDOS
       </ion-title>
-      <h4 class="ion-text-center"> <strong>{{datum}}</strong></h4>
+      <h4 class="ion-text-center"> <strong>{{valueReaded}}</strong></h4>
       <ion-list class="list-data">
         <ion-row>
-          <ion-col>
+          <ion-col size=3>
             <p>Id</p>
           </ion-col>
-          <ion-col>
+          <ion-col size=3>
             <p>Status</p>
           </ion-col>
           <ion-col>
@@ -47,10 +47,10 @@
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let datumData of data">
-          <ion-col>
+          <ion-col size=3>
             <p>{{datumData.id}}</p>
           </ion-col>
-          <ion-col>
+          <ion-col size=3>
             <p>{{datumData.status}}</p>
           </ion-col>
           <ion-col>

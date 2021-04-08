@@ -8,8 +8,31 @@
 
 <ion-content [fullscreen]="true" class='ion-padding' color=secondary>
 
-  <div>
+  <div *ngIf="!connected || !activated" class="ion-text-center">
+    <h3>Vuelve a Bluetooth y verifica conexion</h3>
+  </div>
+
+  <div *ngIf="connected && activated && (!data || data.length == 0 )" class="ion-text-center">
     <h3>Ningun dato todavia</h3>
   </div>
 
+  <div *ngIf="connected && activated && myForm">
+    <form [formGroup]="myForm">
+      <ion-item lines="none" class="ion-no-padding">
+        <ion-label position="stacked">Repeticiones</ion-label>
+        <ion-input formControlName="repeticion" type="text" placeholder="Indique repeticiones"></ion-input>
+      </ion-item>
+      <ion-item lines="none" class="ion-no-padding">
+        <ion-label position="stacked">Distancia</ion-label>
+        <ion-input formControlName="distancia" type="text" placeholder="Indique distancia"></ion-input>
+      </ion-item>
+    </form>
+  </div>
+
 </ion-content>
+
+<ion-footer>
+  
+  <ion-button expand=full fill=solid size=large (click)="onClickStart()" [disabled]="!connected || !subscribed || myForm.invalid"> Comenzar </ion-button>
+  <ion-button expand=full fill=solid size=large (click)="otro()" > OTRO </ion-button>
+</ion-footer>

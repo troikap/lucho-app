@@ -33,6 +33,21 @@ export class Tab1Page {
   ) {}
 
   ngOnInit() {
+    let a = {id:'s', status:1, data:'DARD Suscripto'};
+    console.log('aaaaaa ', a)
+    //console.log('aa2aaaa ', JSON.parse(String(a)))
+    console.log('aa3aaaa ', JSON.parse(JSON.stringify(a)))
+
+    let b = "{id:'s', status:1, data:'DARD Suscripto'}";
+
+    console.log('bbbbbbb ', a)
+    //console.log('bbb2bbbb ',  JSON.parse(String(b)))
+    console.log('bbb3bbbb ', JSON.parse(JSON.stringify(b)))
+
+
+
+
+
   }
 
   ionViewDidEnter() {
@@ -146,6 +161,7 @@ export class Tab1Page {
             },5000);
             this.bluetooth = await this.bluetoothProvider.getBluetoothSerial();
             this.bluetooth.connect(device.address).subscribe(async connected => {
+              console.log('CONECTADO ??? ',connected)
               clearInterval(this.intervalConnected);
               await this.loading.dismiss();
               this.connected = true;

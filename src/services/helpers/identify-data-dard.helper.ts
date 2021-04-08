@@ -6,6 +6,7 @@ export class IdentifyDataDardHelper {
   constructor() {}
 
   async getTypeData (value: string) {
+    console.log('VALUE DATA ', value)
     switch (value) {
       case 'B1':
       case 'B2':
@@ -15,8 +16,13 @@ export class IdentifyDataDardHelper {
       case 'P2':
         return 'base';
       case 'ti':
+      console.log('TEST INICIAL ')
+
+        return 'initTest';
       case 'tf':
-        return 'test';
+      console.log('TEST FINAL ')
+
+        return 'finalizeTest';
       default:
         return null;
     }  

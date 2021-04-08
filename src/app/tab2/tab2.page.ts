@@ -18,10 +18,8 @@ export class Tab2Page {
   public data: any[];
   public subscribed;
   public baseStatus: DardModel[];
-  public errorMessage = 'FALLA/DESCONECTADA';
-  public datum: DardModel;
   public intervalConnected;
-
+  public valueReaded: string;
   constructor(
     private loadingController: LoadingController,
     private bluetoothProvider: BluetoothProvider,
@@ -34,11 +32,11 @@ export class Tab2Page {
     this.baseStatus = [];
   }
   
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     console.log('ionViewWillEnter DE LECTURA')
-    this.verifyBluetoothEnabled();
-    this.getBluetoothProvider();
-    this.verifyConnectedDevice();
+    await this.verifyBluetoothEnabled();
+    await this.getBluetoothProvider();
+    await this.verifyConnectedDevice();
   }
 
   async getBluetoothProvider() {
@@ -47,64 +45,66 @@ export class Tab2Page {
 
   async verifyConnectedDevice() {
     this.connected = await this.bluetoothProvider.verifyConnectedDevice();
-
+    this.changeDetectorRef.detectChanges();
   }
   
   async verifyBluetoothEnabled() {
-    this.loading = await this.loadingController.create({
-      message: 'Cambiando estado de bluetooth ...'
-    });
-    await this.loading.present();
-    setTimeout(async () => {
-      await this.loading.dismiss();
-      this.activated = await this.bluetoothProvider.verifyBluetoothIsEnabled();
-      if (!this.activated) {
-        this.cleanData();
-      }
-    }, 500);
+    this.activated = await this.bluetoothProvider.verifyBluetoothIsEnabled();
+    if (!this.activated) {
+      this.cleanData();
+    }
   }
 
   public async onSubscribe() {
     this.subscribed = "";
     if (!this.data) { this.data = []; }
     if (!this.baseStatus) { this.baseStatus = []; }
-
     this.subscribed = await this.bluetoothProvider.subscribeToDevice();
     this.toastProvider.presentToast(`Recibiendo datos..`, 700, 'success');
-    this.subscribed = await this.subscribed.subscribe( async (value: string) => {
-      console.log('VALUE ', value)
-
-      this.datum = JSON.parse(JSON.stringify(value));
-      console.log('datum ', this.datum)
-      console.log('datum id : ', this.datum.id)
-      console.log('datum  status ', this.datum.status)
-
-
-      const typeData =  await this.identifyDataDardHelper.getTypeData(this.datum.id);
+    let datum: DardModel;
+    this.subscribed = await this.subscribed.subscribe( async (value: any) => {
+      console.log('value ', value)
+      this.valueReaded = value;
+      try {
+        console.log('Lectura correcta');
+        datum = JSON.parse(String(value));
+      } catch (err) {
+        console.log('CATCH subscribed ', err);
+        value = value.split('\r\n')[0]
+        value = value.replace(/[^a-zA-Z 0-9.{}:',]+/g,' mierda ');
+        value = value.replace(/:+/g,': ');
+        value = value.replace(/'+/g,'"');
+        value = value.replace(/id+/g,' "id"');
+        value = value.replace(/status+/g,' "status"');
+        value = value.replace(/data+/g,' "data"');
+        datum = JSON.parse(String(value));
+        console.log('DATUM ', datum)
+      }
+      const typeData =  await this.identifyDataDardHelper.getTypeData(datum.id);
       switch (typeData) {
         case 'base':
           console.log('ENTRO EN BASE')
-          const baseFinded = this.baseStatus.find(element => element.id === this.datum.id);
+          const baseFinded = this.baseStatus.find(element => element.id === datum.id);
           if (baseFinded) {
             console.log('base encontrada ', baseFinded)
-            baseFinded.status = this.datum.status;
-            baseFinded.data = this.datum.data;
+            baseFinded.status = datum.status;
+            baseFinded.data = datum.data;
           } else {
             console.log('base no encontrada ')
-            this.baseStatus.push(this.datum);
+            this.baseStatus.push(datum);
           }
           break;
-        case 'test':
-          console.log('ENTRO EN TEST')
-        
+        case 'initTest':
+          this.toastProvider.presentToast('Iniciando prueba ...', 1000, 'success')
           break;
-      
+        case 'finalizeTest':
+          this.toastProvider.presentToast('Finalizando prueba ...', 1000, 'success')
         default:
           console.log('ENTRO EN NINGUNO')
-
+          this.toastProvider.presentToast('DATO DESCONOCIDO ...', 1000, 'warning')
           break;
       }
-      this.data.push(this.datum);
+      this.data.push(datum);
       this.changeDetectorRef.detectChanges();
     })
     this.bluetoothProvider.writeToDevice('S');
