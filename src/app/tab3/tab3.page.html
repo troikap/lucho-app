@@ -28,11 +28,10 @@
       </ion-item>
     </form>
   </div>
-
 </ion-content>
 
 <ion-footer>
-  
-  <ion-button expand=full fill=solid size=large (click)="onClickStart()" [disabled]="!connected || !subscribed || myForm.invalid"> Comenzar </ion-button>
+  <ion-button expand=full fill=solid size=large (click)="onClickStart()" [disabled]="!connected || !subscribed || (myForm && myForm.invalid)"> Comenzar </ion-button>
   <ion-button expand=full fill=solid size=large (click)="otro()" > OTRO </ion-button>
+  <ion-button expand=full fill=solid size=large (click)="form()" > form </ion-button>
 </ion-footer>

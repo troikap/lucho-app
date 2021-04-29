@@ -15,7 +15,6 @@ export class Tab3Page {
   public bluetooth;
   public activated;
   public connected;
-  private changeDetectorRef: ChangeDetectorRef;
   public subscribed;
   public data: any[];
   public myForm: FormGroup;
@@ -25,16 +24,17 @@ export class Tab3Page {
     private identifyDataDardHelper: IdentifyDataDardHelper,
     private toastProvider: ToastProvider,
     private formBuilder: FormBuilder,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
  async ionViewWillEnter() {
     console.log('ionViewWillEnter DE Resultado')
+    this.initForm();
     await this.verifyBluetoothEnabled();
     await this.getBluetoothProvider();
     await this.verifyConnectedDevice();
     await this.onSubscribe();
-    this.initForm();
   }
 
   initForm() {
@@ -147,5 +147,9 @@ export class Tab3Page {
 
     await alert.present();
 
+  }
+
+  form() {
+    console.log('form ',this.myForm)
   }
 }

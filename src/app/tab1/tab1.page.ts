@@ -33,26 +33,16 @@ export class Tab1Page {
   ) {}
 
   ngOnInit() {
-    let a = {id:'s', status:1, data:'DARD Suscripto'};
-    console.log('aaaaaa ', a)
-    //console.log('aa2aaaa ', JSON.parse(String(a)))
-    console.log('aa3aaaa ', JSON.parse(JSON.stringify(a)))
-
-    let b = "{id:'s', status:1, data:'DARD Suscripto'}";
-
-    console.log('bbbbbbb ', a)
-    //console.log('bbb2bbbb ',  JSON.parse(String(b)))
-    console.log('bbb3bbbb ', JSON.parse(JSON.stringify(b)))
-
-
-
-
-
   }
 
   ionViewDidEnter() {
     console.log('ionViewDidEnter Bluetooth')
     this.verifyBluetoothEnabled();
+  }
+
+  onClickChangeShowDevices() {
+    this.showDevices = !this.showDevices;
+    this.changeDetectorRef.detectChanges();
   }
 
   async verifyBluetoothEnabled() {

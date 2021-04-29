@@ -123,7 +123,7 @@ export class Tab2Page {
     },5000);
     try {
       this.loading.dismiss();
-      const response = await this.bluetoothProvider.writeToDevice('T');
+      const response = await this.bluetoothProvider.writeToDevice("Test");
       if (response) {
         console.log('RESPUESTA onClickInitTest ', response);
         clearInterval(this.intervalConnected);
